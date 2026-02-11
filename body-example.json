@@ -1,0 +1,26 @@
+{
+  "name": "extract-metadata",
+  "image": "cparedes/agents/extract-metadata:1.0.0",
+  "ports": [
+    { "containerPort": 8080, "hostPort": 18080, "protocol": "tcp" }
+  ],
+  "alfresco": {
+    "baseUrl": "http://localhost:8080/alfresco",
+    "authType": "basic",
+    "username": "svc_ai",
+    "passwordSecretRef": {
+      "secretRef": "prop:alfresco.aiagents.secret.svc_ai_password"
+    },
+    "targetNodeId": "workspace://SpacesStore/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+    "pollingSeconds": 10
+  },
+  "llm": {
+    "provider": "ollama",
+    "baseUrl": "http://ollama:11434",
+    "model": "llama3.1",
+    "prompt": "Eres un agente que procesa documentos y deposita los resultados en el nodo destino."
+  },
+  "env": {
+    "LOG_LEVEL": "info"
+  }
+}

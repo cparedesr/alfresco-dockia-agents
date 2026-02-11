@@ -1,0 +1,4 @@
+com/cparedesr/dockia/agents/service/docker/impl/DockerSocketCliServiceImplTest.class
+com/cparedesr/dockia/agents/service/repo/impl/AlfrescoFolderServiceImplTest.class
+com/cparedesr/dockia/agents/service/AgentValidationServiceTest.class
+com/cparedesr/dockia/agents/service/secrets/impl/PropertySecretsServiceTest.class
