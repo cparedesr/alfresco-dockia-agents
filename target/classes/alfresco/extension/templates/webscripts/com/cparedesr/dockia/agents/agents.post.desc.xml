@@ -1,9 +1,0 @@
-<webscript>
-  <shortname>dockia-ai-agents-deploy</shortname>
-  <description>Deploy AI Agent</description>
-  <url>/api/-default-/public/ai-agents/versions/1/agents</url>
-  <format default="json">argument</format>
-  <authentication>user</authentication>
-  <transaction>required</transaction>
-  <family>ai-agents</family>
-</webscript>
