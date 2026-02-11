@@ -54,4 +54,10 @@
     <property name="globalProperties" ref="global-properties"/>
   </bean>
 
+  <bean id="webscript.com.cparedesr.dockia.agents.agents.get"
+        class="com.cparedesr.dockia.agents.webscripts.ListAgentsGetWebScript"
+        parent="webscript">
+    <property name="registryService" ref="dockia.agents.registryService"/>
+  </bean>
+
 </beans>

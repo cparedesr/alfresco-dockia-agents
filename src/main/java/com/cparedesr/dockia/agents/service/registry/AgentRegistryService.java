@@ -1,8 +1,12 @@
 package com.cparedesr.dockia.agents.service.registry;
 
 import com.cparedesr.dockia.agents.model.AgentDeployRequest;
+import com.cparedesr.dockia.agents.model.AgentSummary;
+
+import java.util.List;
 
 public interface AgentRegistryService {
+
     boolean existsByName(String name);
 
     void createAgentNode(String agentId,
@@ -11,4 +15,6 @@ public interface AgentRegistryService {
                          String desired,
                          String current,
                          String targetNodeId);
+
+    List<AgentSummary> listAgents(int skipCount, int maxItems);
 }
