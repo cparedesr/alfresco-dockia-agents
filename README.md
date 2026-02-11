@@ -104,3 +104,31 @@ curl -u admin:admin \
 curl -u admin:admin -X DELETE \
   "http://localhost:8080/alfresco/s/api/-default-/public/ai-agents/versions/1/agents/agent-6c00f331-342f-4658-9d00-02f3a7d0366a"
 ```
+
+### Agent Runtime (Docker) — Variables de entorno
+
+Al desplegar un agente, Alfresco inyecta la configuración en el contenedor mediante variables de entorno.  
+Los secretos (por ejemplo `ALFRESCO_PASSWORD` o `LLM_API_KEY`) **nunca se almacenan en claro**: se resuelven desde `secretRef` (por ejemplo propiedades de `alfresco-global.properties`) y solo se inyectan en runtime.
+
+**Alfresco**
+- `ALFRESCO_BASE_URL`
+- `ALFRESCO_AUTH_TYPE` (`basic|bearer|none`)
+- `ALFRESCO_USERNAME`
+- `ALFRESCO_PASSWORD` (resuelto desde `secretRef`)
+- `ALFRESCO_TARGET_NODE_ID` (NodeRef/UUID)
+- `POLLING_SECONDS`
+
+**LLM**
+- `LLM_PROVIDER`
+- `LLM_BASE_URL`
+- `LLM_MODEL`
+- `LLM_API_KEY` (si aplica, resuelto desde `secretRef`)
+- `AGENT_PROMPT`
+
+**Extras**
+- Variables adicionales definidas en el bloque `env` del JSON del agente (ej. `LOG_LEVEL=info`).
+
+Si queremos ver todas las propiedades que le inyectamos desde alfresco a nuestro container podemos consultar la clase:
+```
+src/main/java/com/cparedesr/dockia/agents/service/AgentDeploymentService.java
+```
