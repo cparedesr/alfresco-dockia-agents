@@ -1,6 +1,5 @@
 package com.cparedesr.dockia.agents.service.docker.impl;
 
-import com.cparedesr.dockia.agents.model.AgentDeployRequest;
 import com.cparedesr.dockia.agents.service.docker.DockerService;
 import org.junit.Before;
 import org.junit.Test;
