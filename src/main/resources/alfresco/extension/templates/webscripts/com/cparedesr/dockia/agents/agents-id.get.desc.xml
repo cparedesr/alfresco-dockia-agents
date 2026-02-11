@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>dockia-ai-agents-detail</shortname>
+  <description>Get AI Agent detail</description>
+  <url>/api/-default-/public/ai-agents/versions/1/agents/{id}</url>
+  <format default="json">argument</format>
+  <authentication>user</authentication>
+  <transaction>required</transaction>
+  <family>ai-agents</family>
+</webscript>

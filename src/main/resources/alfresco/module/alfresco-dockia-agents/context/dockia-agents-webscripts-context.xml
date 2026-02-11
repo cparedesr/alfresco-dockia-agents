@@ -5,7 +5,6 @@
           http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-  <!-- Web Script bean -->
   <bean id="webscript.com.cparedesr.dockia.agents.agents.post"
         class="com.cparedesr.dockia.agents.webscripts.DeployAgentPostWebScript"
         parent="webscript">
@@ -56,6 +55,12 @@
 
   <bean id="webscript.com.cparedesr.dockia.agents.agents.get"
         class="com.cparedesr.dockia.agents.webscripts.ListAgentsGetWebScript"
+        parent="webscript">
+    <property name="registryService" ref="dockia.agents.registryService"/>
+  </bean>
+
+  <bean id="webscript.com.cparedesr.dockia.agents.agents-id.get"
+        class="com.cparedesr.dockia.agents.webscripts.GetAgentByIdWebScript"
         parent="webscript">
     <property name="registryService" ref="dockia.agents.registryService"/>
   </bean>

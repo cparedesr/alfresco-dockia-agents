@@ -1,6 +1,7 @@
 package com.cparedesr.dockia.agents.service.registry;
 
 import com.cparedesr.dockia.agents.model.AgentDeployRequest;
+import com.cparedesr.dockia.agents.model.AgentDetail;
 import com.cparedesr.dockia.agents.model.AgentSummary;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface AgentRegistryService {
                          String targetNodeId);
 
     List<AgentSummary> listAgents(int skipCount, int maxItems);
+
+    AgentDetail getAgentDetailByAgentId(String agentId);
 }
