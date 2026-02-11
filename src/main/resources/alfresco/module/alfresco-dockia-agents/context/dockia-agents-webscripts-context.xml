@@ -65,4 +65,17 @@
     <property name="registryService" ref="dockia.agents.registryService"/>
   </bean>
 
+  <bean id="dockia.agents.deleteService"
+        class="com.cparedesr.dockia.agents.service.AgentDeleteService">
+    <property name="registryService" ref="dockia.agents.registryService"/>
+    <property name="dockerService" ref="dockia.agents.dockerService"/>
+    <property name="globalProperties" ref="global-properties"/>
+  </bean>
+
+  <bean id="webscript.com.cparedesr.dockia.agents.agents-id.delete"
+        class="com.cparedesr.dockia.agents.webscripts.DeleteAgentWebScript"
+        parent="webscript">
+    <property name="deleteService" ref="dockia.agents.deleteService"/>
+  </bean>
+
 </beans>

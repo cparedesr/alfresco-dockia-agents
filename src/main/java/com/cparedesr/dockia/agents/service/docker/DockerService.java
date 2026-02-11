@@ -7,8 +7,13 @@ import java.util.Map;
 
 public interface DockerService {
 
-    CreateResult createAndStart(String agentId, String image, Map<String,String> env, Map<String,String> labels,
+    CreateResult createAndStart(String agentId,
+                               String image,
+                               Map<String, String> env,
+                               Map<String, String> labels,
                                List<AgentDeployRequest.PortMapping> ports);
+
+    void remove(String containerId, boolean force);
 
     class CreateResult {
         private final String containerId;

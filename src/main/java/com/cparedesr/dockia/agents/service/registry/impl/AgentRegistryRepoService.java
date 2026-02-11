@@ -2,6 +2,7 @@ package com.cparedesr.dockia.agents.service.registry.impl;
 
 import com.cparedesr.dockia.agents.model.AgentDeployRequest;
 import com.cparedesr.dockia.agents.model.AgentDetail;
+import com.cparedesr.dockia.agents.model.AgentRuntimeInfo;
 import com.cparedesr.dockia.agents.model.AgentSummary;
 import com.cparedesr.dockia.agents.service.exception.BadRequestException;
 import com.cparedesr.dockia.agents.service.registry.AgentRegistryService;
@@ -109,8 +110,7 @@ public class AgentRegistryRepoService implements AgentRegistryService {
 
         ResultSet rs = null;
         try {
-            NodeRef folder = ensureRegistryFolder();
-            String folderPathQuery = buildRegistryFolderPathQuery(folder);
+            String folderPathQuery = buildRegistryFolderPathQuery();
 
             SearchParameters sp = new SearchParameters();
             sp.setLanguage(SearchService.LANGUAGE_FTS_ALFRESCO);
@@ -124,8 +124,7 @@ public class AgentRegistryRepoService implements AgentRegistryService {
 
             List<AgentSummary> out = new ArrayList<>(rs.length());
             for (int i = 0; i < rs.length(); i++) {
-                NodeRef nr = rs.getNodeRef(i);
-                out.add(mapSummary(nr));
+                out.add(mapSummary(rs.getNodeRef(i)));
             }
             return out;
 
@@ -136,31 +135,28 @@ public class AgentRegistryRepoService implements AgentRegistryService {
 
     @Override
     public AgentDetail getAgentDetailByAgentId(String agentId) {
-        if (agentId == null || agentId.trim().isEmpty()) {
-            throw new BadRequestException("ID_REQUIRED", "Agent id is required");
-        }
-
-        ResultSet rs = null;
-        try {
-            SearchParameters sp = new SearchParameters();
-            sp.setLanguage(SearchService.LANGUAGE_FTS_ALFRESCO);
-            sp.addStore(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE);
-
-            // búsqueda por propiedad ai:agentId
-            sp.setQuery("TYPE:\"ai:agent\" AND =ai:agentId:\"" + escape(agentId.trim()) + "\"");
-
-            rs = searchService.query(sp);
-            if (rs == null || rs.length() == 0) {
-                throw new BadRequestException("NOT_FOUND", "Agent not found: " + agentId);
-            }
-
-            NodeRef nr = rs.getNodeRef(0);
-            return mapDetail(nr);
-
-        } finally {
-            if (rs != null) rs.close();
-        }
+        NodeRef nr = findByAgentIdOrThrow(agentId);
+        return mapDetail(nr);
     }
+
+    @Override
+    public AgentRuntimeInfo getRuntimeInfoByAgentId(String agentId) {
+        NodeRef nr = findByAgentIdOrThrow(agentId);
+
+        AgentRuntimeInfo info = new AgentRuntimeInfo();
+        info.setAgentId(toStr(nodeService.getProperty(nr, PROP_AGENT_ID)));
+        info.setNodeId(nr.getId());
+        info.setContainerId(toStr(nodeService.getProperty(nr, PROP_CONTAINER)));
+        return info;
+    }
+
+    @Override
+    public void deleteByAgentId(String agentId) {
+        NodeRef nr = findByAgentIdOrThrow(agentId);
+        nodeService.deleteNode(nr);
+    }
+
+    // ---------------- mapping ----------------
 
     private AgentSummary mapSummary(NodeRef nodeRef) {
         AgentSummary s = new AgentSummary();
@@ -203,9 +199,7 @@ public class AgentRegistryRepoService implements AgentRegistryService {
         return d;
     }
 
-    private String toStr(Serializable v) {
-        return v == null ? null : v.toString();
-    }
+    private String toStr(Serializable v) { return v == null ? null : v.toString(); }
 
     private String toIso(Serializable v) {
         if (v == null) return null;
@@ -215,6 +209,33 @@ public class AgentRegistryRepoService implements AgentRegistryService {
         }
         return v.toString();
     }
+
+    // ---------------- find helpers ----------------
+
+    private NodeRef findByAgentIdOrThrow(String agentId) {
+        if (agentId == null || agentId.trim().isEmpty()) {
+            throw new BadRequestException("ID_REQUIRED", "Agent id is required");
+        }
+
+        ResultSet rs = null;
+        try {
+            SearchParameters sp = new SearchParameters();
+            sp.setLanguage(SearchService.LANGUAGE_FTS_ALFRESCO);
+            sp.addStore(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE);
+            sp.setQuery("TYPE:\"ai:agent\" AND =ai:agentId:\"" + escape(agentId.trim()) + "\"");
+
+            rs = searchService.query(sp);
+            if (rs == null || rs.length() == 0) {
+                throw new BadRequestException("NOT_FOUND", "Agent not found: " + agentId);
+            }
+            return rs.getNodeRef(0);
+
+        } finally {
+            if (rs != null) rs.close();
+        }
+    }
+
+    // ---------------- registry folder helpers ----------------
 
     private NodeRef ensureRegistryFolder() {
         NodeRef dataDictionary = getDataDictionary();
@@ -246,9 +267,8 @@ public class AgentRegistryRepoService implements AgentRegistryService {
 
     /**
      * PATH fijo del folder "AI Agents" bajo Data Dictionary.
-     * Si cambias el nombre, actualiza este valor.
      */
-    private String buildRegistryFolderPathQuery(NodeRef ignored) {
+    private String buildRegistryFolderPathQuery() {
         return "/app:company_home/app:dictionary/cm:AI_x0020_Agents";
     }
 
